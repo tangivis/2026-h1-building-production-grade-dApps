@@ -1,0 +1,18 @@
+{
+  "version": 0,
+  "descriptorPath": ".papi/descriptors",
+  "entries": {
+    "devnet": {
+      "wsUrl": "ws://localhost:9944\r",
+      "metadata": ".papi/metadata/devnet.scale",
+      "genesis": "0x525b3cf8e2668175599d95e692f61e794ecc7d4cbb401da7c8455269aa132ae4",
+      "codeHash": "0x99e6b7fa81a042eb1c4daf9f2ecb0a2364da449f517e75f97f49868eb4b017e6"
+    },
+    "hub": {
+      "wsUrl": "wss://asset-hub-paseo-rpc.n.dwellir.com",
+      "metadata": ".papi/metadata/hub.scale",
+      "genesis": "0xd6eec26135305a8ad257a20d003357284c8aa03d0bdb2b357ab0a22371e11ef2",
+      "codeHash": "0x580f8c8474f117c97f7027f89598e7dfa83d1c9cb5cdd24aee121a70787be206"
+    }
+  }
+}
