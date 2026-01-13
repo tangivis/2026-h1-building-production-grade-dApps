@@ -1,6 +1,6 @@
 import { useState } from 'react';
 import { ethers } from 'ethers';
-import { MiniSwap_ADDRESS, MiniSwap_ABI, ERC20_ABI, RPC } from '../constants';
+import { MiniSwap_ADDRESS, MiniSwap_ABI, ERC20_ABI, RPC, CHAIN_ID_HEX } from '../constants';
 
 interface LiquidityProps {
     provider: ethers.BrowserProvider;
@@ -52,6 +52,17 @@ export const Liquidity = ({ provider, account, canSendTx = false }: LiquidityPro
 
             setStatus('Getting signer...');
 
+            // Ensure provider is on the expected chain
+            try {
+                const chainId = await provider.send('eth_chainId', []);
+                if (chainId !== CHAIN_ID_HEX) {
+                    setStatus(`Connected wallet is on wrong network (${chainId}); please switch to PassetHub (chainId ${CHAIN_ID_HEX}).`);
+                    return;
+                }
+            } catch (e: any) {
+                console.warn('Failed to check chainId', e);
+            }
+
             // Ensure provider has the account available via eth_accounts
             let rpcAccounts: string[] = [];
             try {
@@ -64,6 +75,23 @@ export const Liquidity = ({ provider, account, canSendTx = false }: LiquidityPro
             if (!rpcAccounts || rpcAccounts.length === 0) {
                 setStatus('No accounts available from provider; please reconnect wallet');
                 return;
+            }
+
+            // Verify token contracts exist on the network
+            try {
+                const readProvider = new ethers.JsonRpcProvider(RPC);
+                const codeA = await withTimeout(readProvider.getCode(tokenA));
+                if (!codeA || codeA === '0x') {
+                    setStatus(`No contract found at token address ${tokenA}. Check the address and network.`);
+                    return;
+                }
+                const codeB = await withTimeout(readProvider.getCode(tokenB));
+                if (!codeB || codeB === '0x') {
+                    setStatus(`No contract found at token address ${tokenB}. Check the address and network.`);
+                    return;
+                }
+            } catch (e: any) {
+                console.warn('Failed to verify token contracts', e);
             }
 
             // Normalize and compare addresses to avoid casing mismatches
@@ -175,11 +203,15 @@ export const Liquidity = ({ provider, account, canSendTx = false }: LiquidityPro
             }
         } catch (err: any) {
             console.error(err);
-            // Better user-facing error messages for common cases
-            if (err?.message?.includes('User denied')) {
+            // Better user-facing error messages for common cases: handle MetaMask/user denied consistently
+            const msg = err?.message || '';
+            if (
+                err?.code === 'ACTION_REJECTED' ||
+                /user denied|user rejected|denied transaction signature|rejected transaction signature|ethers-user-denied/i.test(msg)
+            ) {
                 setStatus('Failed: transaction rejected by user');
             } else {
-                setStatus(`Failed: ${err?.message || String(err)}`);
+                setStatus(`Failed: ${msg || String(err)}`);
             }
         }
     };
