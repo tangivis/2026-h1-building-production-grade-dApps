@@ -1,0 +1,12 @@
+node_modules
+.env
+cache
+artifacts
+deployment.json
+*.log
+
+# UI
+ui/node_modules
+ui/dist
+ui/.vite
+ui/src/config.ts
