@@ -1,0 +1,12 @@
+# Hardhat files
+cache
+artifacts
+
+# Node modules
+node_modules
+
+# Environment
+.env
+
+# Ignition deployment files
+ignition/deployments
