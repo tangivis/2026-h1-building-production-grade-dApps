@@ -1,6 +1,6 @@
 {
   "_format": "hh3-sol-build-info-1",
-  "id": "solc-0_8_28-5c429e803032ee0eb2073c6471931dc10224c83f",
+  "id": "solc-0_8_28-8ddba8047c9e320b1af436453382847ffaafb919",
   "solcVersion": "0.8.28",
   "solcLongVersion": "0.8.28+commit.7893614a",
   "userSourceNameMap": {
@@ -32,7 +32,7 @@
     },
     "sources": {
       "project/contracts/Storage.sol": {
-        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract Storage {\n    uint256 private storedNumber;\n\n    event NumberStored(uint256 newNumber);\n\n    function setNumber(uint256 _number) public {\n        storedNumber = _number;\n        emit NumberStored(_number);\n    }\n}"
+        "content": "// SPDX-License-Identifier: MIT\npragma solidity ^0.8.0;\n\ncontract Storage {\n    uint256 private _storedNumber;\n\n    event NumberStored(uint256 newNumber);\n\n    function setNumber(uint256 _number) public {\n        _storedNumber = _number;\n        emit NumberStored(_number);\n    }\n\n    function storedNumber() public view returns (uint256) {\n        return _storedNumber;\n    }\n}"
       }
     }
   }
